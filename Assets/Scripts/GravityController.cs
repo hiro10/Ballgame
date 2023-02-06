@@ -15,11 +15,9 @@ public class GravityController : MonoBehaviour
 
     // ボタンを押したときtrue、離したときfalseになるフラグ
     private bool buttonDownFlag = false;
-    [SerializeField] private Text btntext;
-
     private void Start()
     {
-        btntext = GetComponent<Text>();
+        SoundManager.instance.PlayBGM(SoundManager.BGM.Main);
     }
 
     /// <summary>
@@ -32,7 +30,8 @@ public class GravityController : MonoBehaviour
 #if UNITY_ANDROID
         //ターゲット端末の縦横の表示に合わせてremapする
         vector.x = Input.acceleration.x;
-        vector.z = Input.acceleration.y;
+        vector.y = Input.acceleration.y;
+        vector.z = Input.acceleration.z;
 #endif
         // キー入力
         vector.x = Input.GetAxis("Horizontal");
@@ -46,21 +45,21 @@ public class GravityController : MonoBehaviour
         {
             vector.y = -1.0f;
         }
-
-        Physics.gravity = Garavity * vector.normalized * garavityScale;
-
+        if (vector.magnitude > 0.1f)
+        {
+            // normalized 正規化
+            Physics.gravity = Garavity * vector.normalized * garavityScale;
+        }
     }
 
     // ボタンを押したときの処理
     public void OnButtonDown()
     {
         buttonDownFlag = true;
-        btntext.text = "重力";
     }
 
     public void OnButtonUp()
     {
         buttonDownFlag = false;
-        btntext.text = "重力off";
     }
 }
